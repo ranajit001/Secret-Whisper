@@ -60,6 +60,7 @@ export const Body = ({setIsOpen}) => {
 
     const fetchMesages = async()=>{
     try {
+      await veryingToken()
           const res = await fetch(`${baseApi}/msg/get_msg`,{credentials:'include'});
           const data = await res.json();
           if(res.ok){
