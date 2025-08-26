@@ -8,19 +8,17 @@ import {io}from 'socket.io-client';
 export const AuthProvider = ({children})=>{
 
     const public_socket_Ref = useRef(null);
-    const private_socket_Ref = useRef(null);
 
     const[user,setUser] = useState({id:null,name:null,createdAt:null});
 
     useEffect(()=>{
-        public_socket_Ref.current = io(baseApi,{ withCredentials: true,path:'/public'}); //enabels cookie sharing automatically
-        private_socket_Ref.current = io(baseApi,{ withCredentials: true,path:'/private'}); //enabels cookie sharing automatically
+        public_socket_Ref.current = io(baseApi,{ withCredentials: true,transports: ["websocket", "polling"]}); //enabels cookie sharing automatically
 
         const saved = JSON.parse(localStorage.getItem('user'));
                 if(saved && saved.name)
                             setUser(saved)
         return ()=> {
-            if(public_socket_Ref.current) public_socket_Ref.current.disconnect();
+             if (public_socket_Ref.current) public_socket_Ref.current.disconnect();
         }
     },[])
 
@@ -53,7 +51,7 @@ export const AuthProvider = ({children})=>{
     }
 
 
-    return(<AuthContext.Provider value={{logOut,LoginOrRegister,user,setUser,public_socket_Ref,private_socket_Ref}}>
+    return(<AuthContext.Provider value={{logOut,LoginOrRegister,user,setUser,public_socket_Ref}}>
        {children}
     </AuthContext.Provider>)
 }

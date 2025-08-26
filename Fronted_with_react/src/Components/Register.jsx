@@ -20,7 +20,7 @@ export const RegisterForm = ({setFormType})=>{
 
     const{LoginOrRegister,public_socket_Ref} = useAuth();
 
-    let typingTimeout = useRef(null); //storing interval in useref because useref servives the re-render
+    let typingTimeout = useRef(null); 
     const public_socket = public_socket_Ref.current
     
         const registering = async(e)=>{
@@ -29,11 +29,12 @@ export const RegisterForm = ({setFormType})=>{
             if(!form.name.trim()|| !form.username ||!form.password) {
                 alert('Oops! Looks like you missed something. Please complete all fields...')
                 return
-            }
+            }   console.log(baseApi);
+            
 
                 try {
                     const res = await fetch(`${baseApi}/user/register`,{
-                        credentials: "include", 
+                        credentials: "include",
                         method:'POST',
                         headers:{
                             'Content-type':'application/json',
@@ -48,7 +49,7 @@ export const RegisterForm = ({setFormType})=>{
                         }
                     else 
                         setForm((prev) => ({ ...prev, error: data.message }));
-                } catch (error) { console.log(error);
+                } catch (error) { console.log(error,'from register function');
                         setForm((prev) => ({ ...prev, error: error.message }));
                 }
         };

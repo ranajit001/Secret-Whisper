@@ -31,7 +31,7 @@ const server = http.createServer(app);
 socket_Controller(server)
 
 
-app.get('/status',(req,res)=>res.send('Running'));
+app.get('/',(req,res)=>res.send('Running'));
 
 server.listen(port,async()=>{
     await connectDB();

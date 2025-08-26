@@ -23,7 +23,7 @@ export const LoginForm = ({setFormType})=>{
                 
                 try {
                     const res = await fetch(`${baseApi}/user/login`,{
-                        credentials: "include", 
+                        credentials: "include",
                         method:'POST',
                         headers:{
                             'Content-type':'application/json',

@@ -62,19 +62,20 @@ export const Body = ({setIsOpen}) => {
     try {
           const res = await fetch(`${baseApi}/msg/get_msg`,{credentials:'include'});
           const data = await res.json();
-          veryingToken()
           if(res.ok){
             setMessages(data.message)
           }
     } catch (error) {
-        alert(error.message)
+        console.log(error);
     }
   }
 
 
 useEffect(()=>{
-  veryingToken();
-  fetchMesages()
+  (async () => {
+      await veryingToken();
+      await fetchMesages()
+  })()
   },[])
 
 

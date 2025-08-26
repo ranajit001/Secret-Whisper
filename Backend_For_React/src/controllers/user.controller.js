@@ -71,7 +71,7 @@ export const register = async(req,res)=>{
                 id: user._id,
                 message: "created",
                 name: user.name,
-                createdAt: createdAt_to_dateAndTime(user.createdAt),
+                createdAt: createdAt_to_dateAndTime(user.createdAt), //time in which the the accout will be auto deleted
   });
 
         
