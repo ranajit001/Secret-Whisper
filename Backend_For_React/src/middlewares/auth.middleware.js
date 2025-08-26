@@ -3,11 +3,6 @@ import { config } from "dotenv";
 import { cookiesOptions } from '../utils/utils.js';
 config()
 
-
-//Express uses the cookie-parser middleware, which automatically parses req.headers.cookie into req.cookies.
-//so we can do const cookieToken = req.cookies?.token?.split(' ')[1]; but for sokcet.oio is different
-
-
 export const authMiddleware = (req,res,next)=>{
     const authHeader = req.headers.authorization?.split(' ')[1];
     const cookieToken = req.cookies?.token; 

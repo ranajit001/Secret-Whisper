@@ -47,12 +47,11 @@ export const Body = ({setIsOpen}) => {
 
   const veryingToken = async()=>{
     try {
-            const res  =  await fetch(`${baseApi}/user/verify`,{credentials:'include'});
-             if(!res.ok){
-              logOut()
-             }
+           const res  =   await fetch(`${baseApi}/user/verify`,{credentials:'include'});
+           const data = res.json();
+           console.log(data);
+           
     } catch (error) {
-      logOut()
       console.log(error,'from verifyingtoken in body');
       
     }
