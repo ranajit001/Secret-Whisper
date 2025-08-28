@@ -34,7 +34,6 @@ export const RegisterForm = ({setFormType})=>{
 
                 try {
                     const res = await fetch(`${baseApi}/user/register`,{
-                        credentials: "include",
                         method:'POST',
                         headers:{
                             'Content-type':'application/json',

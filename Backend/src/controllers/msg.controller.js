@@ -2,7 +2,7 @@ import { MsgModel } from "../models/msg.model.js";
 import { UserModel } from "../models/user.model.js";
 import mongoose from "mongoose";
 
-import { timeRemain } from "./user.controller.js";
+
 import { createdAt_to_dateAndTime } from "./user.controller.js";
 
 export const sendMsg = async (req, res) => {

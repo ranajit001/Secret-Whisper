@@ -1,5 +1,5 @@
 import './Body.css'
-import {Link, LogIn, LogOut,Copy, CopyCheck, Share2,CircleQuestionMark,RefreshCcw } from 'lucide-react'
+import {Link, LogIn, LogOut,Copy, CopyCheck, Share2,RefreshCcw } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { LoginForm } from './Login';
 import { RegisterForm } from './Register';
@@ -14,7 +14,7 @@ import { baseApi } from '../utils/baseApi';
 export const Body = ({setIsOpen}) => {
 
 
-    const{user:{name,createdAt,id},logOut} = useAuth();
+    const{user:{name,deleteAt,id,token},logout_user,} = useAuth();
 
     
 
@@ -46,21 +46,40 @@ export const Body = ({setIsOpen}) => {
 };
 
   const veryingToken = async()=>{
-    try {
-           const res  =   await fetch(`${baseApi}/user/verify`,{credentials:'include'});
-           const data = res.json();
-           console.log(data);
-           
+    try { 
+         const res  =   await fetch(`${baseApi}/user/verify`,{
+            method:'GET',
+            headers:{
+              'Authorization': token,
+              'Content-Type': 'application/json' 
+            },
+           });
+           if(!res.ok){
+            logout_user();
+            setMessages([])
+           }else{
+            console.log('corect');
+            
+           }
+
     } catch (error) {
       console.log(error,'from verifyingtoken in body');
-      
+
     }
   }
+
+
 
     const fetchMesages = async()=>{
     try {
       await veryingToken()
-          const res = await fetch(`${baseApi}/msg/get_msg`,{credentials:'include'});
+          const res = await fetch(`${baseApi}/msg/get_msg`,{
+            method:'GET',
+            headers:{
+              'Authorization':token,
+              'Content-Type':'application/json',
+            }
+          });
           const data = await res.json();
           if(res.ok){
             setMessages(data.message)
@@ -74,7 +93,7 @@ export const Body = ({setIsOpen}) => {
 useEffect(()=>{
   (async () => {
       await veryingToken();
-      await fetchMesages()
+      await fetchMesages();
   })()
   },[])
 
@@ -88,14 +107,14 @@ useEffect(()=>{
 
       
             <h1 style={{textAlign:'center'}}>Send & Receive Secret Messages Like a Spy! </h1>
-            <p>Get your own magical link and let people drop anonymous messages into your secret inbox! No names, no traces—just pure mystery and fun. Messages disappear forever once you read them! 🔥</p>
+            <p>Get your own magical link and let people drop anonymous messages into your secret inbox! No names, no traces—just pure mystery and fun. Messages self-destruct 24 hours after the account creation ⏳ 🔥</p>
 
 
         <div style={{border: '2px dashed #e2e8f0'}}></div>
 
-        {name && createdAt && <div className='welcome-user'>
+        {name && deleteAt && <div className='welcome-user'>
           <p style={{color:'#00e6e6ff',fontSize:"1.5rem" }}>Welcome <b style={{color:'#f57542'}}>{name}</b> !</p>
-          <p style={{color:'#69bcffff'}}>Your account and messages are scheduled for auto-deletion on : <b style={{color:'red'}}>{createdAt}</b>.</p>
+          <p style={{color:'#69bcffff'}}>Your account and messages are scheduled for auto-deletion on : <b style={{color:'red'}}>{deleteAt}</b>.</p>
         </div>}
 
 
@@ -107,7 +126,7 @@ useEffect(()=>{
             <p>Someone's probably typing something mysterious for you right now... 👀</p>
             </div>}
             <div className="messages-list">
-                {messages.map((e, index) => <p key={index} className='message-item'><span><CircleQuestionMark size={15}/></span>{e.text}</p>)}
+                {messages.map((e, index) => <p key={index} className='message-item'>📌 {e.text}</p>)}
             </div>
 
               {name &&<button onClick={fetchMesages} style={{margin:'2rem 0'}}>Refresh <RefreshCcw size={17}/></button>}
@@ -148,7 +167,7 @@ useEffect(()=>{
 {/* logout */}
     <div className='logout'  style={{margin:'1.5rem 0'}}>
       <p>Time to vanish? See you later! 👋</p>
-      <button onClick={logOut} > Logout <LogOut /></button>
+      <button onClick={()=>{logout_user();setMessages([])}}> Logout <LogOut /></button>
     </div>
   </div>
 )}
@@ -163,7 +182,7 @@ useEffect(()=>{
                 <li> Hit <b>Create My Secret Link</b> and BAM! You get your own special anonymous link! 🎯</li>
                 <li> Share it everywhere—social media, group chats, or slip it to your crush! 😉</li>
                 <li> Anyone can send you messages without revealing who they are. It's like having superpowers! 🦸‍♀️</li>
-                <li>You'll NEVER know who sent what—could be your bestie, your mom, or that cute person from class! 🤔</li>
+                <li>You'll NEVER know who sent what—could be your bestie, your mom, or your colleague ! 🤔</li>
                 <li> Your account and all messages self-destruct in 24 hours, keeping your secret world fresh and exciting! 💥 </li>
           </ul>
         </div>

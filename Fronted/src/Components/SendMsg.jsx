@@ -52,7 +52,7 @@ const sendMsg = async () => {
       headers: {
         'Content-type': 'application/json',
       },
-      body: JSON.stringify({ message }), // make sure "message" exists
+      body: JSON.stringify({ message }),
     });
     const dataa = await res.json()
     if (res.ok) {
@@ -62,7 +62,6 @@ const sendMsg = async () => {
     }
     else{
           setReciver(prev => ({ ...prev, error: dataa.message }));
-
     }
   } catch (err) {
     setReciver(prev => ({ ...prev, error: err.message }));

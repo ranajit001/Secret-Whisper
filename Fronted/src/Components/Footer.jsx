@@ -1,5 +1,5 @@
 
-import'./F.css'
+import'./Footer.css'
 import{Mail,HelpCircle,Linkedin,Github,Server,}from 'lucide-react'
 export const Footer = ()=>{
 

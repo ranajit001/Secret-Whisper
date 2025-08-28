@@ -23,14 +23,13 @@ export const LoginForm = ({setFormType})=>{
                 
                 try {
                     const res = await fetch(`${baseApi}/user/login`,{
-                        credentials: "include",
                         method:'POST',
                         headers:{
                             'Content-type':'application/json',
                         },
-                        body:JSON.stringify({username:form.username.trim(),password:form.password})
+                        body:JSON.stringify({username:form.username.trim(),password:form.password.trim()})
                     });
-                    const data = await res.json();  console.log(data);
+                    const data = await res.json(); 
                     
                         if(res.ok){
                             LoginOrRegister(data)

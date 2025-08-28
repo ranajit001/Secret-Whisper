@@ -1,6 +1,4 @@
 import { UserModel } from "../models/user.model.js";
-import { allUserModel } from "../models/allusers.model.js";
-import { cookiesOptions } from "../utils/utils.js";
 import  argon2  from "argon2";
 import jwt from 'jsonwebtoken';
 import { config } from "dotenv";
@@ -20,7 +18,7 @@ export const timeRemain = (user) => {
   const nowIST = new Date(Date.now() + istOffset);
 
   const diff = nowIST - createdAtIST;
-  const fullDay = 24 * 60 * 60 * 1000; // 24 hours in ms
+  const fullDay = 24 * 60 * 60 * 1000; 
 
   let ans = Math.floor((fullDay - diff) / 1000);
   return ans > 0 ? ans : 0;
@@ -37,7 +35,7 @@ export const createdAt_to_dateAndTime = (isoString) => {
     hour: '2-digit',
     minute: '2-digit',
     hour12: true,
-    timeZone: 'Asia/Kolkata' // 💥 Force IST even in UTC servers
+    timeZone: 'Asia/Kolkata' // Force IST even in UTC servers
   };
 
   return date.toLocaleString('en-IN', options);
@@ -62,19 +60,17 @@ export const register = async(req,res)=>{
         const hash = await argon2.hash(password);
         const user = await UserModel.create({name,username,password:hash});      
         
-            await allUserModel.create({name}) // => only saving name of register user permanently...
+            const accesstoken =token(user)
 
         res
-        .cookie("token", token(user), {...cookiesOptions,maxAge: 1000 * 60 * 60 * 24,  })
         .status(200)
         .json({
                 id: user._id,
                 message: "created",
                 name: user.name,
-                createdAt: createdAt_to_dateAndTime(user.createdAt), //time in which the the accout will be auto deleted
+                deleteAt: createdAt_to_dateAndTime(user.createdAt), 
+                token:`Bearer ${accesstoken}`
   });
-
-        
     } catch (error) {
         if (error.code == 11000)return res.status(409).json({message:'This username is already taken'})
          res.status(500).json({message:`${error.message} server error`})
@@ -95,16 +91,18 @@ export const login = async(req,res)=>{
         if(!user)
             return res.status(400).json({message:'Invalid username'});
 
+                    const accesstoken =token(user,timeRemain(user))
 
         if(await argon2.verify(user.password,password))
             return res
-                .cookie('token',token(user, `${timeRemain(user)}s`), {...cookiesOptions,maxAge:timeRemain(user)*1000})
                 .status(200).json({
                                 id:user._id,
                                 message:'login success',   
                                 name:user.name ,
-                                createdAt:createdAt_to_dateAndTime(user.createdAt)
-                                });
+                                deleteAt:createdAt_to_dateAndTime(user.createdAt),
+                                token:`Bearer ${accesstoken}`
+            });
+                                
 
                 res.status(400).json({message:'Invalid password'})
     } catch (error) {
@@ -113,10 +111,8 @@ export const login = async(req,res)=>{
     }
 }
 
-//it will be used in socket.io to ckeck username uniqueness while register
-export const usernameValidator = async(username)=>{ //console.log(username,'user');
-
- // exported to app.js
+//socket.io exporterd
+export const usernameValidator = async(username)=>{ 
     try {
         if(!username && !username.trim())
             return {message:'Please provide a usrname',status:400,username}
@@ -133,16 +129,8 @@ export const usernameValidator = async(username)=>{ //console.log(username,'user
 
 
 //it will be called in every home page reload to verify jwt token from middleware;
-export const loginStatusCheck = (req,res)=>{// console.log('user verified');
-
+export const loginStatusCheck = (req,res)=>{
 res.status(200).json({message:'ok'})
 }
 
-export const logout = (req,res)=>{// console.log('logout called');
-    res
-    .status(200)
-    .clearCookie('token',cookiesOptions)
-    .json({ message: "Logged out successfully" });
-
-}
 

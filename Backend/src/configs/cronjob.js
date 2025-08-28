@@ -4,12 +4,6 @@ import { UserModel } from '../models/user.model.js';
 
 
 
-cron.schedule('5 * * * *', async () => { // due to spin dont in 15 mnt of render running thiscron job too fast, every 5mnt
-  console.log('Cron job running every 12 hours');
-  await cleanUpMessages();
-});
-
-
 
 
 
@@ -26,3 +20,8 @@ const cleanUpMessages = async () => {
     console.error('Error while cleaning messages:', error.message);
   }
 };
+
+cron.schedule('5 * * * *', async () => { 
+  console.log('Cron job running every 12 hours');
+  await cleanUpMessages();
+});
